@@ -1,0 +1,544 @@
+<html>
+<head>
+  <title>Tic-Tac-Toe</title>
+  <style>
+    :root {
+      --primary-color: #2196f3;
+      --bg-color: #f0f4f8;
+      --text-color: #333;
+      --cell-bg: #fff;
+      --cell-hover: #e3f2fd;
+      --cell-win: #a5d6a7;
+    }
+
+    [data-theme="dark"] {
+      --primary-color: #90caf9;
+      --bg-color: #121212;
+      --text-color: #eee;
+      --cell-bg: #333;
+      --cell-hover: #444;
+      --cell-win: #66bb6a;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-btn {
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-options {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.menu-options button {
+  background: none;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-options button:hover {
+  background-color: #e0e0e0;
+}
+
+    .profile {
+      display: flex;
+      align-items: center;
+      background-color: var(--cell-bg);
+      border: 2px solid var(--primary-color);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 50%;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: var(--cell-bg);
+      border: 2px solid var(--text-color);
+      font-size: 2.5em;
+      font-weight: bold;
+      text-align: center;
+      line-height: 100px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .cell:hover {
+      background-color: var(--cell-hover);
+    }
+
+    .cell.winning {
+      background-color: var(--cell-win) !important;
+      color: #1b5e20;
+    }
+
+    .controls, .extras {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button, select, input[type="color"] {
+      padding: 8px 12px;
+      font-size: 1em;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #status, #timer, #scoreboard, #leaderboardDisplay {
+      margin-top: 10px;
+      font-size: 1em;
+    }
+
+    .leaderboard-entry {
+      margin: 2px 0;
+    }
+.cell:nth-child(1) { background-color: #ffebee; }
+.cell:nth-child(2) { background-color: #e8f5e9; }
+.cell:nth-child(3) { background-color: #e3f2fd; }
+.cell:nth-child(4) { background-color: #fff3e0; }
+.cell:nth-child(5) { background-color: #f3e5f5; }
+.cell:nth-child(6) { background-color: #ede7f6; }
+.cell:nth-child(7) { background-color: #e0f7fa; }
+.cell:nth-child(8) { background-color: #f9fbe7; }
+.cell:nth-child(9) { background-color: #fbe9e7; }
+
+.cell:hover {
+  filter: brightness(1.1); /* Optional: hover effect */
+}
+[data-theme="dark"] .cell:nth-child(1) { background-color: #b71c1c; }
+[data-theme="dark"] .cell:nth-child(2) { background-color: #1b5e20; }
+[data-theme="dark"] .cell:nth-child(3) { background-color: #0d47a1; }
+[data-theme="dark"] .cell:nth-child(4) { background-color: #e65100; }
+[data-theme="dark"] .cell:nth-child(5) { background-color: #4a148c; }
+[data-theme="dark"] .cell:nth-child(6) { background-color: #311b92; }
+[data-theme="dark"] .cell:nth-child(7) { background-color: #006064; }
+[data-theme="dark"] .cell:nth-child(8) { background-color: #827717; }
+[data-theme="dark"] .cell:nth-child(9) { background-color: #bf360c; }
+.menu-options {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: var(--cell-bg); /* matches current theme */
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 5px 0;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+  z-index: 1;
+}
+
+.menu-options button,
+.menu-options select {
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.menu-options button:hover,
+.menu-options select:hover {
+  background-color: var(--cell-hover);
+}
+#playAgainContainer {
+  display: none;
+  margin-top: 10px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+#playAgainContainer.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+  </style>
+</head>
+<body data-theme="light">
+  <h1>Tic-Tac-Toe</h1>
+<div class="menu-container">
+  <button class="menu-btn">⋮</button>
+  <div class="menu-options" id="optionsMenu">
+    <button onclick="resetGame()">Reset Game</button>
+    <button onclick="toggleTheme()">Toggle Dark Mode</button>
+    <button onclick="resetScores()">Reset Leaderboard</button>
+ <button onclick="toggleMode()">Mode: Player vs Player</button>
+<label for="difficulty" style="padding: 10px; display: block;">AI Difficulty:</label>
+<select id="difficulty" onchange="setDifficulty()" style="margin: 0 10px 10px;">
+  <option value="easy">Easy</option>
+  <option value="hard">Hard</option>
+</select>
+  </div>
+</div>
+  <div class="profile">
+    <img src="https://cdn-icons-png.flaticon.com/512/147/147144.png" class="profile-icon" alt="Player Icon">
+    <span id="playerName">Player X</span>
+  </div>  
+
+  <div class="board" id="board"></div>
+  <div id="status"><b>Player X's turn</b></div>
+  <div id="timer"><b>Time Left: 10s</b></div>
+  <div id="scoreboard"><b>X: 0 | O: 0 | Draws: 0</b></div>
+<div id="playAgainContainer" style="display: none; margin-top: 15px;">
+  <button onclick="resetGame()" style="
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+  ">🔁 Play Again</button>
+</div>
+
+
+  <!-- Sound Effects -->
+  <audio id="moveSound" src="https://cdn.pixabay.com/download/audio/2025/04/22/audio_20ac789653.mp3?filename=pop-331049.mp3"></audio>
+  <audio id="winSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3"></audio>
+  <audio id="drawSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5983c75eaf.mp3?filename=failure-1-89170.mp3"></audio>
+
+  <script>
+document.querySelector('.menu-btn').addEventListener('click', function () {
+  const menu = document.getElementById('optionsMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+});
+
+// Optional: Hide menu if clicked outside
+window.addEventListener('click', function (e) {
+  if (!e.target.matches('.menu-btn')) {
+    const menu = document.getElementById('optionsMenu');
+    if (menu && menu.style.display === 'block') {
+      menu.style.display = 'none';
+    }
+  }
+});
+
+    const boardElement = document.getElementById('board');
+    const statusText = document.getElementById('status');
+    const timerText = document.getElementById('timer');
+    const scoreboardText = document.getElementById('scoreboard');
+    const leaderboardDisplay = document.getElementById('leaderboardDisplay');
+    const playerName = document.getElementById('playerName');
+
+    const moveSound = document.getElementById('moveSound');
+    const winSound = document.getElementById('winSound');
+    const drawSound = document.getElementById('drawSound');
+
+    let cells = Array(9).fill('');
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let singlePlayer = false;
+    let difficulty = 'easy';
+    let timeLeft = 10;
+    let timerInterval;
+
+    let scores = JSON.parse(localStorage.getItem('tttScores')) || { X: 0, O: 0, draw: 0 };
+    let leaderboardData = JSON.parse(localStorage.getItem('tttLeaderboard')) || [];
+
+    function renderBoard() {
+      boardElement.innerHTML = '';
+      cells.forEach((cell, index) => {
+        const cellElement = document.createElement('div');
+        cellElement.className = 'cell';
+        cellElement.textContent = cell;
+        cellElement.addEventListener('click', () => handleCellClick(index));
+        boardElement.appendChild(cellElement);
+      });
+    }
+
+    function handleCellClick(index) {
+      if (!gameActive || cells[index]) return;
+      cells[index] = currentPlayer;
+      moveSound.play();
+      renderBoard();
+
+      if (checkWinner()) return;
+      if (cells.every(cell => cell)) return declareDraw();
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      updatePlayerName();
+      statusText.textContent = `Player ${currentPlayer}'s turn`;
+      resetTimer();
+
+      if (singlePlayer && currentPlayer === 'O') {
+        setTimeout(computerMove, 300);
+      }
+    }
+
+    function updatePlayerName() {
+      playerName.textContent = `Player ${currentPlayer}`;
+    }
+function checkWinner() {
+  const wins = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  for (const [a, b, c] of wins) {
+    if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+      gameActive = false;
+      clearInterval(timerInterval);
+      winSound.play();
+showPlayAgainButton();
+
+      statusText.textContent = `Player ${currentPlayer} wins! 🎉 Game Over!`;
+      document.querySelectorAll('.cell')[a].classList.add('winning');
+      document.querySelectorAll('.cell')[b].classList.add('winning');
+      document.querySelectorAll('.cell')[c].classList.add('winning');
+      scores[currentPlayer]++;
+      updateScore();
+      updateLeaderboard(currentPlayer);
+      showPlayAgain();
+      return true;
+if (checkWinner()) {
+  showPlayAgainButton();
+  return;
+}
+
+    }
+  }
+  return false;
+}
+
+function declareDraw() {
+  gameActive = false;
+  clearInterval(timerInterval);
+  drawSound.play();
+showPlayAgainButton();
+
+  statusText.textContent = "It's a draw! 🤝 Game Over!";
+  scores.draw++;
+  updateScore();
+  updateLeaderboard('draw');
+  showPlayAgain();
+}
+
+function resetGame() {
+  document.getElementById('playAgainContainer').classList.remove('show');
+document.getElementById('playAgainContainer').style.display = 'none';
+
+  cells = Array(9).fill('');
+  currentPlayer = 'X';
+  gameActive = true;
+  statusText.textContent = `Player ${currentPlayer}'s turn`;
+  updatePlayerName();
+  renderBoard();
+  resetTimer();
+}
+
+    function setDifficulty() {
+      difficulty = document.getElementById('difficulty').value;
+    }
+
+    function computerMove() {
+      const move = (difficulty === 'hard') ? bestMove() : randomMove();
+      handleCellClick(move);
+    }
+
+    function randomMove() {
+      const empty = cells.map((v, i) => v === '' ? i : null).filter(i => i !== null);
+      return empty[Math.floor(Math.random() * empty.length)];
+    }
+
+    function bestMove() {
+      let bestScore = -Infinity;
+      let move;
+      for (let i = 0; i < 9; i++) {
+        if (!cells[i]) {
+          cells[i] = 'O';
+          let score = minimax(cells, 0, false);
+          cells[i] = '';
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+
+    function minimax(board, depth, isMax) {
+      let winner = checkMinimaxWinner(board);
+      if (winner === 'O') return 1;
+      if (winner === 'X') return -1;
+      if (board.every(cell => cell)) return 0;
+
+      if (isMax) {
+        let best = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (!board[i]) {
+            board[i] = 'O';
+            best = Math.max(best, minimax(board, depth + 1, false));
+            board[i] = '';
+          }
+        }
+        return best;
+      } else {
+        let best = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (!board[i]) {
+            board[i] = 'X';
+            best = Math.min(best, minimax(board, depth + 1, true));
+            board[i] = '';
+          }
+        }
+        return best;
+      }
+    }
+
+    function checkMinimaxWinner(board) {
+      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (let [a,b,c] of wins) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
+        }
+      }
+      return null;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timeLeft = 10;
+      timerText.textContent = `Time Left: ${timeLeft}s`;
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerText.textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+          updatePlayerName();
+          statusText.textContent = `Time's up! Player ${currentPlayer}'s turn.`;
+          resetTimer();
+          if (singlePlayer && currentPlayer === 'O') {
+            setTimeout(computerMove, 500);
+          }
+        }
+      }, 1000);
+    }
+
+    function updateScore() {
+      scoreboardText.textContent = `X: ${scores.X} | O: ${scores.O} | Draws: ${scores.draw}`;
+      localStorage.setItem('tttScores', JSON.stringify(scores));
+    }
+
+    function updateLeaderboard(winner) {
+      if (winner === 'draw') return;
+      let player = leaderboardData.find(p => p.name === winner);
+      if (player) {
+        player.wins++;
+      } else {
+        leaderboardData.push({ name: winner, wins: 1 });
+      }
+      leaderboardData.sort((a, b) => b.wins - a.wins);
+      localStorage.setItem('tttLeaderboard', JSON.stringify(leaderboardData));
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      leaderboardDisplay.innerHTML = "<strong>Leaderboard:</strong><br>" +
+        leaderboardData.map(p => `<div class="leaderboard-entry">${p.name}: ${p.wins}</div>`).join('');
+    }
+
+    function resetScores() {
+      localStorage.removeItem('tttScores');
+      localStorage.removeItem('tttLeaderboard');
+      scores = { X: 0, O: 0, draw: 0 };
+      leaderboardData = [];
+      updateScore();
+      renderLeaderboard();
+    }
+
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+    }
+
+    function changeThemeColor() {
+      const color = document.getElementById('colorPicker').value;
+      document.documentElement.style.setProperty('--primary-color', color);
+    }
+function toggleMode() {
+      singlePlayer = !singlePlayer;
+      resetGame();
+      const modeButton = document.querySelector('.controls button:nth-child(2)');
+      modeButton.textContent = `Mode: ${singlePlayer ? 'Player vs Computer' : 'Player vs Player'}`;
+    }
+function showPlayAgain() {
+  const gameOverSound = document.getElementById('gameOverSound');
+  const playAgainContainer = document.getElementById('playAgainContainer');
+  playAgainContainer.classList.add('show');
+  gameOverSound.play();
+}
+function showPlayAgainButton() {
+  document.getElementById('playAgainContainer').style.display = 'block';
+}
+    // Init
+    renderBoard();
+    updateScore();
+    renderLeaderboard();
+    updatePlayerName();
+    resetTimer();
+  </script>
+</body>
+</html>
